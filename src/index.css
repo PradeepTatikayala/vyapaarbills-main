@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vyapaar-blue: #1e3a8a;
+  --color-vyapaar-blueDark: #172554;
+  --color-vyapaar-blueLight: #eff6ff;
+  --color-vyapaar-saffron: #ea580c;
+  --color-vyapaar-saffronHover: #c2410c;
+  --color-vyapaar-emerald: #059669;
+  --color-vyapaar-gray: #f8fafc;
+  --color-vyapaar-text: #1e293b;
+  --color-vyapaar-textMuted: #64748b;
+
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --animate-float-slow: float-slow 15s ease-in-out infinite;
+  --animate-float-medium: float-medium 10s ease-in-out infinite;
+
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(40px, -50px) scale(1.15); }
+  }
+  @keyframes float-medium {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(-40px, 40px) scale(0.9); }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-vyapaar-text font-sans antialiased selection:bg-vyapaar-saffron selection:text-white min-h-screen overflow-x-hidden;
+  }
+
+  html[data-theme="dark"] body {
+    @apply bg-slate-950 text-slate-100;
+  }
+
+  html[data-theme="dark"] .bg-slate-50,
+  html[data-theme="dark"] .bg-vyapaar-gray {
+    background-color: #0f172a !important;
+  }
+
+  html[data-theme="dark"] .bg-white,
+  html[data-theme="dark"] .ui-card {
+    background-color: #111827 !important;
+  }
+
+  html[data-theme="dark"] .bg-slate-100,
+  html[data-theme="dark"] .bg-slate-50\/70,
+  html[data-theme="dark"] .bg-slate-50\/60,
+  html[data-theme="dark"] .bg-slate-50\/50,
+  html[data-theme="dark"] .bg-slate-50\/40,
+  html[data-theme="dark"] .bg-slate-50\/30 {
+    background-color: #1e293b !important;
+  }
+
+  html[data-theme="dark"] .text-vyapaar-text,
+  html[data-theme="dark"] .text-slate-900,
+  html[data-theme="dark"] .text-slate-800,
+  html[data-theme="dark"] .text-slate-700,
+  html[data-theme="dark"] .text-slate-600 {
+    color: #e5e7eb !important;
+  }
+
+  html[data-theme="dark"] .text-slate-500,
+  html[data-theme="dark"] .text-slate-400 {
+    color: #94a3b8 !important;
+  }
+
+  html[data-theme="dark"] .border-slate-50,
+  html[data-theme="dark"] .border-slate-100,
+  html[data-theme="dark"] .border-slate-200,
+  html[data-theme="dark"] .border-slate-300 {
+    border-color: #334155 !important;
+  }
+
+  html[data-theme="dark"] .input-field {
+    @apply bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500;
+  }
+}
+
+@layer components {
+  .ui-card {
+    @apply bg-white border border-slate-100 shadow-soft rounded-2xl transition-all duration-300;
+  }
+  
+  .ui-card:hover {
+    @apply shadow-elevated border-slate-200;
+  }
+  
+  .input-field {
+    @apply w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-vyapaar-text placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-vyapaar-blue focus:border-transparent transition-all duration-300;
+  }
+  
+  .btn-primary {
+    @apply bg-vyapaar-saffron text-white font-semibold rounded-lg px-6 py-3 shadow-md hover:bg-vyapaar-saffronHover hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-vyapaar-blue border border-slate-300 font-semibold rounded-lg px-6 py-3 hover:bg-slate-50 hover:border-vyapaar-blue transition-all duration-300 flex items-center justify-center gap-2;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 640px) {
+  main .p-8,
+  main .p-6 {
+    padding: 1rem !important;
+  }
+
+  main .pb-24,
+  main .pb-20 {
+    padding-bottom: 5.5rem !important;
+  }
+
+  main .gap-8 {
+    gap: 1rem !important;
+  }
+
+  main .gap-6 {
+    gap: 0.875rem !important;
+  }
+
+  main .text-5xl {
+    font-size: 2rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  main .text-4xl {
+    font-size: 1.75rem !important;
+    line-height: 2.125rem !important;
+  }
+
+  main .text-3xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  main table {
+    min-width: 720px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    min-height: 44px;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .input-field {
+    min-height: 44px;
+  }
+}
