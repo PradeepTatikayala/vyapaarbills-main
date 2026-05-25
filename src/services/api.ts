@@ -1,5 +1,5 @@
 import { auth, db, functions } from '../firebase';
-import { collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
 export const authService = {
@@ -30,15 +30,15 @@ export const shopService = {
     });
     return { id: docRef.id, ...shopData };
   },
-  update: async (id: string, shopData: any) => {
-    const shopRef = doc(db, 'shops', id);
+  update: async (id: any, shopData: any) => {
+    const shopRef = doc(db, 'shops', id.toString());
     await updateDoc(shopRef, shopData);
     return { id, ...shopData };
   }
 };
 
 export const userService = {
-  getDashboard: async () => {
+  getDashboard: async (): Promise<any> => {
     if (!auth.currentUser) throw new Error("Not authenticated");
     const uid = auth.currentUser.uid;
     const userDoc = await getDoc(doc(db, 'users', uid));
@@ -56,7 +56,7 @@ export const userService = {
         name: userData.name,
       },
       shop: shop,
-      is_gst_pending: shop ? shop.gst_number === 'PENDING_GST' : false,
+      is_gst_pending: shop ? (shop as any).gst_number === 'PENDING_GST' : false,
     };
   },
   updatePlan: async (plan: string) => {
@@ -87,16 +87,16 @@ export const adminService = {
   getStats: async () => {
     return { total_users: 0, total_revenue: 0, active_shops: 0 };
   },
-  listUsers: async () => {
+  listUsers: async (): Promise<any[]> => {
     const snapshot = await getDocs(collection(db, 'users'));
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
   },
-  updateUser: async (id: string, data: any) => {
-    await updateDoc(doc(db, 'users', id), data);
+  updateUser: async (id: any, data: any) => {
+    await updateDoc(doc(db, 'users', id.toString()), data);
     return { id, ...data };
   },
-  toggleRestriction: async (id: string) => {
-    const userRef = doc(db, 'users', id);
+  toggleRestriction: async (id: any) => {
+    const userRef = doc(db, 'users', id.toString());
     const snap = await getDoc(userRef);
     if (snap.exists()) {
        const current = snap.data().is_active !== false;
@@ -107,16 +107,16 @@ export const adminService = {
 };
 
 export const categoryService = {
-  list: async () => ['Grocery', 'Electronics', 'Clothing', 'Others'],
+  list: async (): Promise<any> => ({ available: ['Grocery', 'Electronics', 'Clothing', 'Others'], selected: [] }),
   save: async (categories: string[]) => ({ categories })
 };
 
 export const inventoryService = {
-  list: async () => {
+  list: async (): Promise<any[]> => {
     if (!auth.currentUser) return [];
     const q = query(collection(db, 'inventory'), where('userId', '==', auth.currentUser.uid));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    return snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() }));
   },
   create: async (data: any) => {
     if (!auth.currentUser) throw new Error("Not authenticated");
@@ -127,16 +127,16 @@ export const inventoryService = {
     });
     return { id: docRef.id, ...data };
   },
-  update: async (id: string, data: any) => {
-    await updateDoc(doc(db, 'inventory', id), data);
+  update: async (id: any, data: any) => {
+    await updateDoc(doc(db, 'inventory', id.toString()), data);
     return { id, ...data };
   },
-  delete: async (id: string) => {
-    await deleteDoc(doc(db, 'inventory', id));
+  delete: async (id: any) => {
+    await deleteDoc(doc(db, 'inventory', id.toString()));
     return { success: true };
   },
-  getStats: async () => ({ total_items: 0, low_stock: 0, out_of_stock: 0 }),
-  searchGlobal: async (queryStr: string) => []
+  getStats: async (): Promise<any> => ({ total_items: 0, low_stock: 0, out_of_stock: 0 }),
+  searchGlobal: async (_queryStr: string): Promise<any[]> => []
 };
 
 // Aliasing userItemService to inventoryService for the transition
@@ -158,11 +158,11 @@ export const posService = {
 };
 
 export const billingService = {
-  generate: async (formData: any) => {
+  generate: async (_formData: any): Promise<any> => {
     throw new Error("Requires Cloud Functions");
   },
-  getRuns: async () => [],
-  downloadPDF: async (runId: string) => {
+  getRuns: async (): Promise<any[]> => [],
+  downloadPDF: async (_runId: any): Promise<any> => {
     throw new Error("Requires Cloud Functions");
   }
 };

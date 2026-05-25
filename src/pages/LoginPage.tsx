@@ -6,8 +6,7 @@ import {
   LogIn, Loader2, Store, ShoppingBag, Shirt, Layers,
   Eye, EyeOff, Lock, Mail, Check, Zap, Star, Building2
 } from 'lucide-react';
-import { authService } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
@@ -55,7 +54,6 @@ export const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {

@@ -22,8 +22,8 @@ import { UiCard } from '../components/UiCard';
 import { inventoryService, posService } from '../services/api';
 
 type InventoryItem = {
-  id: number;
-  item_id: number;
+  id: string;
+  item_id: string;
   name: string;
   category?: string;
   hsn_code?: string;
@@ -182,7 +182,7 @@ export const ItemsPage = () => {
     }
   };
 
-  const deleteStock = async (id: number) => {
+  const deleteStock = async (id: string) => {
     await inventoryService.delete(id);
     setItems((current) => current.filter((item) => item.id !== id));
     await loadInventory();
@@ -199,7 +199,7 @@ export const ItemsPage = () => {
     });
   };
 
-  const setCartQty = (id: number, quantity: number) => {
+  const setCartQty = (id: string, quantity: number) => {
     setCart((current) =>
       current
         .map((entry) => entry.id === id ? { ...entry, quantity: Math.max(1, Math.min(quantity, Number(entry.stock_qty))) } : entry)

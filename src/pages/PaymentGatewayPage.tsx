@@ -84,7 +84,7 @@ export const PaymentGatewayPage = () => {
         return;
       }
 
-      const order = await paymentService.createRazorpayOrder();
+      const order: any = await paymentService.createRazorpayOrder();
       if (order.key_mode === 'test') {
         toast.error('Razorpay is in test mode. Real PhonePe/GPay apps cannot verify test UPI QR codes.');
       }

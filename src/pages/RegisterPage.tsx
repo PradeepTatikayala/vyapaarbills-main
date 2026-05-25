@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Check, Loader2, Store } from 'lucide-react';
-import { authService, shopService, userService } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -28,7 +26,6 @@ export const RegisterPage = () => {
     acceptedTerms: false
   });
 
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleNext = () => setStep(prev => Math.min(prev + 1, 3));
