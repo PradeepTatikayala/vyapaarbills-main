@@ -5,6 +5,9 @@ import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Check, Loader2, Store } from 'lucide-react';
 import { authService, shopService, userService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const CUSTOM_PLAN_PHONE = '9133410628';
 
@@ -25,7 +28,7 @@ export const RegisterPage = () => {
     acceptedTerms: false
   });
 
-  const { setToken } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleNext = () => setStep(prev => Math.min(prev + 1, 3));
@@ -43,21 +46,33 @@ export const RegisterPage = () => {
     }
     setIsLoading(true);
     try {
-      await authService.register({
+      // Firebase Auth Registration
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        formData.email || formData.mobile + '@temp.com', 
+        formData.password
+      );
+      const uid = userCredential.user.uid;
+
+      // Save User Data to Firestore
+      await setDoc(doc(db, 'users', uid), {
+        name: formData.name,
         email: formData.email || formData.mobile + '@temp.com',
-        password: formData.password,
         phone_number: formData.mobile,
+        plan: formData.plan,
+        createdAt: new Date().toISOString()
       });
-      const authRes = await authService.login(formData.email || formData.mobile + '@temp.com', formData.password);
-      setToken(authRes.token);
-      await shopService.create({
+
+      // Save Shop Data to Firestore
+      await addDoc(collection(db, 'shops'), {
+        userId: uid,
         name: formData.shopName,
         shop_type: formData.shopType,
         dealer_type: formData.dealerType,
         address: formData.address,
-        gst_number: 'PENDING_GST'
+        gst_number: 'PENDING_GST',
+        createdAt: new Date().toISOString()
       });
-      await userService.updatePlan(formData.plan);
       if (formData.plan === 'custom') {
         toast.success('Shop registered. Please call us to activate your custom plan.');
       } else {

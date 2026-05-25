@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { authService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const plans = [
   {
@@ -53,19 +55,18 @@ export const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const data = await authService.login(email, password);
-      setToken(data.token);
+      await signInWithEmailAndPassword(auth, email, password);
       toast.success('Pranam! Welcome back to VyapaarBills.');
       navigate('/');
     } catch (err: any) {
-      toast.error(err.response?.data?.non_field_errors?.[0] || 'Invalid credentials. Please verify your email/password.');
+      toast.error(err.message || 'Invalid credentials. Please verify your email/password.');
     } finally {
       setIsLoading(false);
     }

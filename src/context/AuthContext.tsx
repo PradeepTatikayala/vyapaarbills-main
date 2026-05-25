@@ -1,43 +1,46 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 interface AuthContextType {
-  token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
-  setToken: (token: string | null) => void;
-  logout: () => void;
+  loading: boolean;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  token: null,
+  user: null,
   isAuthenticated: false,
-  setToken: () => {},
-  logout: () => {},
+  loading: true,
+  logout: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setTokenState] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch (error) {
+      console.error('Logout error', error);
     }
-  }, [token]);
-
-  const setToken = (newToken: string | null) => {
-    setTokenState(newToken);
-  };
-
-  const logout = () => {
-    setTokenState(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated: !!token, setToken, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, logout }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
